@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = ListItemModel.class, version = 1, exportSchema = false)
+@Database(entities = ListItemModel.class, version = 2, exportSchema = false)
 public abstract class ListDatabase extends RoomDatabase {
     private static final String dbName = "list.db";
     private static ListDatabase database;
