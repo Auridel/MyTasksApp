@@ -1,12 +1,17 @@
 package com.example.mytasksapp.data;
 
-public class Task {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "task")
+public class TaskItemModel {
+    @PrimaryKey
     private int id;
     private int listId;
     private String title;
     private boolean checked;
 
-    public Task(int id, int listId, String title, boolean checked) {
+    public TaskItemModel(int id, int listId, String title, boolean checked) {
         this.id = id;
         this.listId = listId;
         this.title = title;

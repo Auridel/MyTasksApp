@@ -1,10 +1,15 @@
 package com.example.mytasksapp.data;
 
-public class List {
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "list")
+public class ListItemModel {
+    @PrimaryKey
     private int id;
     private String title;
 
-    public List(int id, String title) {
+    public ListItemModel(int id, String title) {
         this.id = id;
         this.title = title;
     }
