@@ -21,4 +21,6 @@ public abstract class ListDatabase extends RoomDatabase {
             return database;
         }
     }
+
+    public abstract ListDao listDao();
 }

@@ -11,10 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.TaskItemModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
-    List<TaskItemModel> taskItemModels;
+    private List<TaskItemModel> taskItemModels;
+
+    public TaskAdapter() {
+        this.taskItemModels = new ArrayList<>();
+    }
 
     class TaskViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewTaskTitle;

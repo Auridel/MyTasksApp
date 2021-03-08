@@ -103,7 +103,7 @@ public class NetworkUtils {
                 String line = bufferedReader.readLine();
                 while (line != null) {
                     stringBuilder.append(line);
-                    bufferedReader.readLine();
+                    line = bufferedReader.readLine();
                 }
                 result = new JSONArray(stringBuilder.toString());
             } catch (IOException e) {

@@ -11,6 +11,9 @@ import java.util.List;
 
 @Dao
 public interface TaskDao {
+    @Query("SELECT * FROM task")
+    LiveData<List<TaskItemModel>> getAllTasks();
+
     @Query("SELECT * FROM task WHERE listId == :listId")
     LiveData<List<TaskItemModel>> getTasksByListId(int listId);
 

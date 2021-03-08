@@ -14,10 +14,19 @@ import com.example.mytasksapp.data.ListItemModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder> {
+public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListViewHolder> {
     private List<ListItemModel> listItemModels;
 
-    public ListAdapter() {
+    class ListViewHolder extends  RecyclerView.ViewHolder {
+        private TextView textViewListTitle;
+
+        public ListViewHolder(@NonNull View itemView) {
+            super(itemView);
+            this.textViewListTitle = itemView.findViewById(R.id.textViewListTitle);
+        }
+    }
+
+    public ListItemAdapter() {
         this.listItemModels = new ArrayList<>();
     }
 
@@ -39,16 +48,13 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
         return listItemModels.size();
     }
 
-    class ListViewHolder extends  RecyclerView.ViewHolder {
-        private TextView textViewListTitle;
-
-        public ListViewHolder(@NonNull View itemView) {
-            super(itemView);
-            this.textViewListTitle = itemView.findViewById(R.id.textViewListTitle);
-        }
+    public void setListItemModels(List<ListItemModel> listItemModels) {
+        this.listItemModels.addAll(listItemModels);
+        notifyDataSetChanged();
     }
 
-    public void setListItemModels(List<ListItemModel> listItemModels) {
-        this.listItemModels = listItemModels;
+    public void clear() {
+        this.listItemModels.clear();
+        notifyDataSetChanged();
     }
 }
