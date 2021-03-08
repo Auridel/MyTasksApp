@@ -8,13 +8,13 @@ public class TaskItemModel {
     @PrimaryKey
     private int id;
     private int listId;
-    private String title;
+    private String text;
     private boolean checked;
 
-    public TaskItemModel(int id, int listId, String title, boolean checked) {
+    public TaskItemModel(int id, int listId, String text, boolean checked) {
         this.id = id;
         this.listId = listId;
-        this.title = title;
+        this.text = text;
         this.checked = checked;
     }
 
@@ -26,8 +26,8 @@ public class TaskItemModel {
         return listId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getText() {
+        return text;
     }
 
     public boolean isChecked() {
@@ -42,8 +42,8 @@ public class TaskItemModel {
         this.listId = listId;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setText(String text) {
+        this.text = text;
     }
 
     public void setChecked(boolean checked) {
