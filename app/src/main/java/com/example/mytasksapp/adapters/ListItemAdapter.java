@@ -3,26 +3,54 @@ package com.example.mytasksapp.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.mytasksapp.MainActivity;
 import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.ListItemModel;
+import com.example.mytasksapp.data.MainViewModel;
+import com.example.mytasksapp.data.TaskItemModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListViewHolder> {
     private List<ListItemModel> listItemModels;
+    private List<TaskItemModel> taskItemModels;
+    TaskAdapter tasksAdapter;
+    TaskAdapter completedTaskAdapter;
+    private MainViewModel viewModel;
+
 
     class ListViewHolder extends  RecyclerView.ViewHolder {
         private TextView textViewListTitle;
+        private TextView textViewCompleted;
+        private RecyclerView recyclerViewTasks;
+        private RecyclerView recyclerViewCompletedTasks;
+
+        private boolean isVisible = true;
+
 
         public ListViewHolder(@NonNull View itemView) {
             super(itemView);
             this.textViewListTitle = itemView.findViewById(R.id.textViewListTitle);
+            this.recyclerViewTasks = itemView.findViewById(R.id.recyclerViewTasks);
+            this.recyclerViewCompletedTasks = itemView.findViewById(R.id.recyclerViewCompletedTasks);
+            this.textViewCompleted = itemView.findViewById(R.id.textViewCompleted);
+            textViewCompleted.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    isVisible = !isVisible;
+                    if(isVisible) recyclerViewCompletedTasks.setVisibility(View.GONE);
+                    else recyclerViewCompletedTasks.setVisibility(View.VISIBLE);
+                }
+            });
         }
     }
 
@@ -40,7 +68,20 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         ListItemModel listItemModel = listItemModels.get(position);
+        List<TaskItemModel> tasks = filterTasksByListId(listItemModel.getId());
+        List<TaskItemModel> completedTasks = filterCompletedTasksByListId(listItemModel.getId());
         holder.textViewListTitle.setText(listItemModel.getTitle());
+        holder.recyclerViewTasks.setLayoutManager(new LinearLayoutManager(holder.recyclerViewTasks.getContext(), LinearLayoutManager.VERTICAL, false));
+        holder.recyclerViewCompletedTasks.setLayoutManager(new LinearLayoutManager(holder.recyclerViewTasks.getContext(),
+                LinearLayoutManager.VERTICAL, false));
+        tasksAdapter = new TaskAdapter();
+        tasksAdapter.setViewModel(viewModel);
+        completedTaskAdapter = new TaskAdapter();
+        completedTaskAdapter.setViewModel(viewModel);
+        tasksAdapter.setTaskItemModels(tasks);
+        completedTaskAdapter.setTaskItemModels(completedTasks);
+        holder.recyclerViewTasks.setAdapter(tasksAdapter);
+        holder.recyclerViewCompletedTasks.setAdapter(completedTaskAdapter);
     }
 
     @Override
@@ -51,6 +92,35 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     public void setListItemModels(List<ListItemModel> listItemModels) {
         this.listItemModels.addAll(listItemModels);
         notifyDataSetChanged();
+    }
+
+    public void setTaskItemModels(List<TaskItemModel> taskItemModels) {
+        this.taskItemModels = taskItemModels;
+        notifyDataSetChanged();
+    }
+
+    public List<TaskItemModel> filterTasksByListId(int listId) {
+        List<TaskItemModel> result = new ArrayList<>();
+        for (TaskItemModel task : taskItemModels) {
+            if(task.getListId() == listId && !task.isChecked()){
+                result.add(task);
+            }
+        }
+        return result;
+    }
+
+    public List<TaskItemModel> filterCompletedTasksByListId(int listId) {
+        List<TaskItemModel> result = new ArrayList<>();
+        for (TaskItemModel task : taskItemModels) {
+            if(task.getListId() == listId && task.isChecked()){
+                result.add(task);
+            }
+        }
+        return result;
+    }
+
+    public void setViewModel(MainViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 
     public void clear() {

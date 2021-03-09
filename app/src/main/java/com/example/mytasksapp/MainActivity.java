@@ -3,6 +3,8 @@ package com.example.mytasksapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Application;
 import android.os.Bundle;
 import android.view.View;
 
@@ -24,6 +27,7 @@ import org.json.JSONArray;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONArray> {
     private RecyclerView recyclerViewMainScreen;
@@ -46,9 +50,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         recyclerViewMainScreen = findViewById(R.id.recyclerViewMainScreen);
         recyclerViewMainScreen.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listAdapter = new ListItemAdapter();
+        listAdapter.setViewModel(viewModel);
         recyclerViewMainScreen.setAdapter(listAdapter);
         loaderManager = LoaderManager.getInstance(this);
         downloadData();
+        LiveData<List<ListItemModel>> listLiveData = viewModel.getAllLists();
+        listLiveData.observe(this, new Observer<List<ListItemModel>>() {
+            @Override
+            public void onChanged(List<ListItemModel> listItemModels) {
+                listAdapter.setListItemModels(listItemModels);
+            }
+        });
+//        LiveData<List<TaskItemModel>> taskLiveData = viewModel.get  observer
     }
 
     public void onClickAddList(View view) {
@@ -91,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             for (TaskItemModel taskItemModel : taskItemModels) {
                 viewModel.insertTask(taskItemModel);
             }
+            listAdapter.setTaskItemModels(taskItemModels);
         }
         isLoading = false;
         loaderManager.destroyLoader(LOADER_ID);
@@ -99,5 +113,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<JSONArray> loader) {
 
+    }
+
+    public MainViewModel getViewModel() {
+        return viewModel;
     }
 }
