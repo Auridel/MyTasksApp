@@ -1,8 +1,10 @@
 package com.example.mytasksapp.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -31,6 +33,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     class ListViewHolder extends  RecyclerView.ViewHolder {
         private TextView textViewListTitle;
         private TextView textViewCompleted;
+        private ImageView imageViewCompletedArrow;
         private RecyclerView recyclerViewTasks;
         private RecyclerView recyclerViewCompletedTasks;
 
@@ -43,12 +46,26 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
             this.recyclerViewTasks = itemView.findViewById(R.id.recyclerViewTasks);
             this.recyclerViewCompletedTasks = itemView.findViewById(R.id.recyclerViewCompletedTasks);
             this.textViewCompleted = itemView.findViewById(R.id.textViewCompleted);
+            this.imageViewCompletedArrow = itemView.findViewById(R.id.imageViewCompletedArrow);
             textViewCompleted.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(isVisible) {
+                        imageViewCompletedArrow.animate().rotation(180);
+                        recyclerViewCompletedTasks.animate().alpha(0).scaleY(0).withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclerViewCompletedTasks.setVisibility(View.GONE);
+                            }
+                        });
+
+                    }
+                    else {
+                        imageViewCompletedArrow.animate().rotation(360);
+                        recyclerViewCompletedTasks.setVisibility(View.VISIBLE);
+                        recyclerViewCompletedTasks.animate().scaleY(1).alpha(1);
+                    }
                     isVisible = !isVisible;
-                    if(isVisible) recyclerViewCompletedTasks.setVisibility(View.GONE);
-                    else recyclerViewCompletedTasks.setVisibility(View.VISIBLE);
                 }
             });
         }

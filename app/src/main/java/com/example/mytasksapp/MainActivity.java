@@ -13,6 +13,9 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Application;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.view.View;
 
@@ -22,6 +25,7 @@ import com.example.mytasksapp.data.MainViewModel;
 import com.example.mytasksapp.data.TaskItemModel;
 import com.example.mytasksapp.utils.JSONUtils;
 import com.example.mytasksapp.utils.NetworkUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 
@@ -33,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView recyclerViewMainScreen;
     private RecyclerView recyclerViewTasks;
     private RecyclerView recyclerViewCompletedTasks;
+    private FloatingActionButton floatingActionButtonAddList;
 
     private MainViewModel viewModel;
     private ListItemAdapter listAdapter;
@@ -48,6 +53,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
                 .getInstance(getApplication())).get(MainViewModel.class);
         recyclerViewMainScreen = findViewById(R.id.recyclerViewMainScreen);
+        floatingActionButtonAddList = findViewById(R.id.floatingActionButton);
+        floatingActionButtonAddList.setColorFilter(Color.WHITE);
         recyclerViewMainScreen.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         listAdapter = new ListItemAdapter();
         listAdapter.setViewModel(viewModel);
@@ -61,10 +68,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 listAdapter.setListItemModels(listItemModels);
             }
         });
-//        LiveData<List<TaskItemModel>> taskLiveData = viewModel.get  observer
+        LiveData<List<TaskItemModel>> taskLiveData = viewModel.getAllTasks();
+        taskLiveData.observe(this, new Observer<List<TaskItemModel>>() {
+            @Override
+            public void onChanged(List<TaskItemModel> taskItemModels) {
+                listAdapter.setTaskItemModels(taskItemModels);
+            }
+        });
     }
 
     public void onClickAddList(View view) {
+        Intent intent = new Intent(this, ActivityAddTask.class);
+        startActivity(intent);
     }
 
     private void downloadData() {
@@ -115,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
-    public MainViewModel getViewModel() {
-        return viewModel;
+    public void onClickEditLists(View view) {
     }
 }

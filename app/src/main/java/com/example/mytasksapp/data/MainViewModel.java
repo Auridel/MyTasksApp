@@ -154,6 +154,17 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
+    public LiveData<List<TaskItemModel>> getAllTasks() {
+        try {
+            return new GetAllTasks().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static class GetTasksByListIdTask extends AsyncTask<Integer, Void,
             LiveData<List<TaskItemModel>>> {
         @Override
@@ -200,6 +211,16 @@ public class MainViewModel extends AndroidViewModel {
                 taskDatabase.taskDao().insertTask(taskItemModels[0]);
             }
             return null;
+        }
+    }
+
+    private static class GetAllTasks extends AsyncTask<Void, Void,
+            LiveData<List<TaskItemModel>>> {
+        @Override
+        protected LiveData<List<TaskItemModel>> doInBackground(Void... voids) {
+            LiveData<List<TaskItemModel>> tasks;
+            tasks = taskDatabase.taskDao().getAllTasks();
+            return tasks;
         }
     }
 }
