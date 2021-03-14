@@ -21,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.example.mytasksapp.adapters.ListItemAdapter;
+import com.example.mytasksapp.data.CategoryItem;
 import com.example.mytasksapp.data.ListItemModel;
 import com.example.mytasksapp.data.MainViewModel;
 import com.example.mytasksapp.data.TaskItemModel;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             for (ListItemModel listItemModel : listItemModels) {
                 viewModel.insertList(listItemModel);
             }
+            convertItems(listItemModels);
         }
         if (taskItemModels != null && !taskItemModels.isEmpty()) {
             viewModel.deleteAllTasks();
@@ -126,6 +128,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoaderReset(@NonNull Loader<JSONArray> loader) {
 
+    }
+
+    private void convertItems(List<ListItemModel> listItemModels) {
+        for (int i = 0; i < listItemModels.size(); i++) {
+            boolean isChecked = i == 0;
+            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
+            viewModel.insertCategory(categoryItem);
+        }
     }
 
     public void onClickEditLists(View view) {

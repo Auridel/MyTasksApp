@@ -61,7 +61,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
 
                     }
                     else {
-                        imageViewCompletedArrow.animate().rotation(360);
+                        imageViewCompletedArrow.animate().rotation(0);
                         recyclerViewCompletedTasks.setVisibility(View.VISIBLE);
                         recyclerViewCompletedTasks.animate().scaleY(1).alpha(1);
                     }
@@ -112,7 +112,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     }
 
     public void setTaskItemModels(List<TaskItemModel> taskItemModels) {
-        tasksAdapter.clear();
+        if(tasksAdapter != null) tasksAdapter.clear();
         this.taskItemModels = taskItemModels;
         notifyDataSetChanged();
     }

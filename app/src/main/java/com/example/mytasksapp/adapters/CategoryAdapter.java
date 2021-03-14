@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,15 +23,18 @@ import java.util.List;
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
     private List<CategoryItem> categoryItems = new ArrayList<>();
     private boolean isChecked = false;
+    private MainViewModel viewModel;
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
         private TextView textViewCategoryTitle;
         private ImageView imageViewCategoryRadio;
+        private ConstraintLayout constraintLayout;
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewCategoryTitle = itemView.findViewById(R.id.textViewCategoryTitle);
             imageViewCategoryRadio = itemView.findViewById(R.id.imageViewCategoryRadio);
+            constraintLayout = itemView.findViewById(R.id.constraintCategory);
         }
     }
 
@@ -45,6 +49,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         CategoryItem categoryItem = categoryItems.get(position);
         holder.textViewCategoryTitle.setText(categoryItem.getTitle());
+        holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.checkCategory(categoryItem);
+            }
+        });
         isChecked = categoryItem.isChecked();
         if(isChecked) {
             holder.imageViewCategoryRadio.setImageResource(R.drawable.ic_baseline_radio_button_checked_24);
@@ -58,17 +68,12 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         return categoryItems.size();
     }
 
-    public void convertItems(List<ListItemModel> listItemModels) {
-        for (int i = 0; i < listItemModels.size(); i++) {
-            boolean isChecked = i == 0;
-            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
-            categoryItems.add(categoryItem);
-            Log.i("sdasdsa", categoryItem.getTitle()+ "111");
-        }
+    public void setCategoryItems(List<CategoryItem> categoryItems) {
+        this.categoryItems = categoryItems;
+        notifyDataSetChanged();
     }
 
-    public void setCategoryItems(List<ListItemModel> listItemModels) {
-        convertItems(listItemModels);
-        notifyDataSetChanged();
+    public void setViewModel(MainViewModel viewModel) {
+        this.viewModel = viewModel;
     }
 }

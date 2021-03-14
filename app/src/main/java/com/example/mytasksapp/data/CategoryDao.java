@@ -29,4 +29,7 @@ public interface CategoryDao {
 
     @Query("UPDATE category SET checked = 0 WHERE checked == 1")
     void uncheckCategories();
+
+    @Query("UPDATE category SET checked = 1 WHERE id == :id")
+    void checkCategory(int id);
 }
