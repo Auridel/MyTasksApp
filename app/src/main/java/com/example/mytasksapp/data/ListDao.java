@@ -12,13 +12,13 @@ import java.util.List;
 
 @Dao
 public interface ListDao {
-    @Query("SELECT * FROM list")
+    @Query("SELECT * FROM lists")
     LiveData<List<ListItemModel>> getLists();
 
     @Delete
     void deleteList(ListItemModel listItemModel);
 
-    @Query("DELETE FROM list")
+    @Query("DELETE FROM lists")
     void deleteAllLists();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

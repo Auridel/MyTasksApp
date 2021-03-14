@@ -1,6 +1,11 @@
 package com.example.mytasksapp.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "category")
 public class CategoryItem {
+    @PrimaryKey
     private int id;
     private String title;
     private boolean checked;

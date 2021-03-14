@@ -2,6 +2,7 @@ package com.example.mytasksapp.data;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,20 +10,15 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class MainViewModel extends AndroidViewModel {
-    private LiveData<List<ListItemModel>> listLiveData;
-    private LiveData<List<TaskItemModel>> taskLiveData;
-
-    private static TaskDatabase taskDatabase;
-    private static ListDatabase listDatabase;
+    private static MyTasksDatabase myTasksDatabase;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
-        taskDatabase = TaskDatabase.getInstance(getApplication());
-        listDatabase = ListDatabase.getInstance(getApplication());
-        listLiveData = listDatabase.listDao().getLists();
-        taskLiveData = taskDatabase.taskDao().getAllTasks();
+        myTasksDatabase = MyTasksDatabase.getInstance(getApplication());
     }
 
     public LiveData<List<ListItemModel>> getAllLists() {
@@ -37,81 +33,51 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void deleteAllLists() {
-        try {
-            new DeleteAllListsTask().execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.listDao().deleteAllLists();
+            }
+        });
     }
 
     public void deleteList(ListItemModel listItemModel) {
-        try {
-            new DeleteListTask().execute(listItemModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.listDao().deleteList(listItemModel);
+            }
+        });
     }
 
     public void insertList(ListItemModel listItemModel) {
-        try {
-            new InsertListTask().execute(listItemModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.listDao().insertList(listItemModel);
+            }
+        });
     }
 
     public void updateList(ListItemModel listItemModel) {
-        try {
-            new UpdateListTask().execute(listItemModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.listDao().updateList(listItemModel);
+            }
+        });
     }
 
-    private static class GetAllLists extends AsyncTask<Void, Void, LiveData<List<ListItemModel>>>{
+    private static class GetAllLists extends AsyncTask<Void, Void, LiveData<List<ListItemModel>>> {
         @Override
         protected LiveData<List<ListItemModel>> doInBackground(Void... voids) {
             LiveData<List<ListItemModel>> lists;
-            lists = listDatabase.listDao().getLists();
+            lists = myTasksDatabase.listDao().getLists();
             return lists;
-        }
-    }
-
-    private static class DeleteAllListsTask extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... voids) {
-            listDatabase.listDao().deleteAllLists();
-            return null;
-        }
-    }
-
-    private static class DeleteListTask extends AsyncTask<ListItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(ListItemModel... listItemModels) {
-            if (listItemModels != null && listItemModels.length > 0) {
-                listDatabase.listDao().deleteList(listItemModels[0]);
-            }
-            return null;
-        }
-    }
-
-    private static class InsertListTask extends AsyncTask<ListItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(ListItemModel... listItemModels) {
-            if (listItemModels != null && listItemModels.length > 0) {
-                listDatabase.listDao().insertList(listItemModels[0]);
-            }
-            return null;
-        }
-    }
-
-    private static class UpdateListTask extends AsyncTask<ListItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(ListItemModel... listItemModels) {
-            if (listItemModels != null && listItemModels.length > 0) {
-                listDatabase.listDao().updateList(listItemModels[0]);
-            }
-            return null;
         }
     }
 
@@ -127,31 +93,43 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void deleteAllTasks() {
-        try {
-            new DeleteAllListsTask().execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.taskDao().deleteAllTasks();
+            }
+        });
     }
 
     public void deleteTask(TaskItemModel taskItemModel) {
-        new DeleteTaskTask().execute(taskItemModel);
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.taskDao().deleteTask(taskItemModel);
+            }
+        });
     }
 
     public void updateTask(TaskItemModel taskItemModel) {
-        try {
-            new UpdateTaskTask().execute(taskItemModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.taskDao().updateTask(taskItemModel);
+            }
+        });
     }
 
     public void insertTask(TaskItemModel taskItemModel) {
-        try {
-            new InsertTaskTask().execute(taskItemModel);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.taskDao().insertTask(taskItemModel);
+            }
+        });
     }
 
     public LiveData<List<TaskItemModel>> getAllTasks() {
@@ -170,45 +148,7 @@ public class MainViewModel extends AndroidViewModel {
         @Override
         protected LiveData<List<TaskItemModel>> doInBackground(Integer... integers) {
             if (integers != null && integers.length > 0) {
-                return taskDatabase.taskDao().getTasksByListId(integers[0]);
-            }
-            return null;
-        }
-    }
-
-    private static class DeleteAllTasksTask extends AsyncTask<Void, Void, Void>{
-        @Override
-        protected Void doInBackground(Void... voids) {
-            taskDatabase.taskDao().deleteAllTasks();
-            return null;
-        }
-    }
-
-    private static class DeleteTaskTask extends AsyncTask<TaskItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(TaskItemModel... taskItemModels) {
-            if(taskItemModels != null && taskItemModels.length > 0) {
-                taskDatabase.taskDao().deleteTask(taskItemModels[0]);
-            }
-            return null;
-        }
-    }
-
-    private static class UpdateTaskTask extends AsyncTask<TaskItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(TaskItemModel... taskItemModels) {
-            if(taskItemModels != null && taskItemModels.length > 0) {
-                taskDatabase.taskDao().updateTask(taskItemModels[0]);
-            }
-            return null;
-        }
-    }
-
-    private static class InsertTaskTask extends AsyncTask<TaskItemModel, Void, Void> {
-        @Override
-        protected Void doInBackground(TaskItemModel... taskItemModels) {
-            if(taskItemModels != null && taskItemModels.length > 0) {
-                taskDatabase.taskDao().insertTask(taskItemModels[0]);
+                return myTasksDatabase.taskDao().getTasksByListId(integers[0]);
             }
             return null;
         }
@@ -219,8 +159,42 @@ public class MainViewModel extends AndroidViewModel {
         @Override
         protected LiveData<List<TaskItemModel>> doInBackground(Void... voids) {
             LiveData<List<TaskItemModel>> tasks;
-            tasks = taskDatabase.taskDao().getAllTasks();
+            tasks = myTasksDatabase.taskDao().getAllTasks();
             return tasks;
         }
     }
+
+//    private static LiveData<List<CategoryItem>> getCategories() {
+//
+//    }
+//
+//    private static void deleteAllCategories() {
+//
+//    }
+//
+//    private static void insertCategory(CategoryItem categoryItem) {
+//
+//    }
+//
+//    private static void deleteCategory(CategoryItem categoryItem) {
+//
+//    }
+//
+//    private static void updateCategory(CategoryItem categoryItem) {
+//
+//    }
+//
+//    private static void uncheckCategories() {
+//
+//    }
+//
+//    private static class GetCategories extends AsyncTask<Void, Void,
+//            LiveData<List<CategoryItem>>> {
+//        @Override
+//        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
+//            LiveData<List<CategoryItem>> categories;
+//            categories = categoryDatabase.categoryDao().getAllCategories();
+//            return categories;
+//        }
+//    }
 }

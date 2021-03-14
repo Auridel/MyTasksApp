@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class JSONUtils {
     private static final String KEY_ID = "id";
@@ -17,8 +18,8 @@ public class JSONUtils {
     private static final String KEY_TASKS = "todos";
     private static final String KEY_CHECKED = "checked";
 
-    public static ArrayList<ListItemModel> getLists(JSONArray jsonArray) {
-        ArrayList<ListItemModel> result = new ArrayList<>();
+    public static List<ListItemModel> getLists(JSONArray jsonArray) {
+        List<ListItemModel> result = new ArrayList<>();
         if(jsonArray != null && jsonArray.length() > 0) {
             for (int i = 0; i < jsonArray.length(); i++) {
                 try {

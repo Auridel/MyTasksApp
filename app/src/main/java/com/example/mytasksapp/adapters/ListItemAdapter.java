@@ -107,20 +107,23 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     }
 
     public void setListItemModels(List<ListItemModel> listItemModels) {
-        this.listItemModels.addAll(listItemModels);
+        this.listItemModels = listItemModels;
         notifyDataSetChanged();
     }
 
     public void setTaskItemModels(List<TaskItemModel> taskItemModels) {
+        tasksAdapter.clear();
         this.taskItemModels = taskItemModels;
         notifyDataSetChanged();
     }
 
     public List<TaskItemModel> filterTasksByListId(int listId) {
         List<TaskItemModel> result = new ArrayList<>();
-        for (TaskItemModel task : taskItemModels) {
-            if(task.getListId() == listId && !task.isChecked()){
-                result.add(task);
+        if(taskItemModels != null && taskItemModels.size() > 0) {
+            for (TaskItemModel task : taskItemModels) {
+                if (task.getListId() == listId && !task.isChecked()) {
+                    result.add(task);
+                }
             }
         }
         return result;
@@ -128,9 +131,11 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
 
     public List<TaskItemModel> filterCompletedTasksByListId(int listId) {
         List<TaskItemModel> result = new ArrayList<>();
-        for (TaskItemModel task : taskItemModels) {
-            if(task.getListId() == listId && task.isChecked()){
-                result.add(task);
+        if(taskItemModels != null && taskItemModels.size() > 0) {
+            for (TaskItemModel task : taskItemModels) {
+                if (task.getListId() == listId && task.isChecked()) {
+                    result.add(task);
+                }
             }
         }
         return result;

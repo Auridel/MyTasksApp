@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mytasksapp.adapters.ListItemAdapter;
@@ -35,8 +36,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONArray> {
     private RecyclerView recyclerViewMainScreen;
-    private RecyclerView recyclerViewTasks;
-    private RecyclerView recyclerViewCompletedTasks;
     private FloatingActionButton floatingActionButtonAddList;
 
     private MainViewModel viewModel;
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         listAdapter.setViewModel(viewModel);
         recyclerViewMainScreen.setAdapter(listAdapter);
         loaderManager = LoaderManager.getInstance(this);
-        downloadData();
         LiveData<List<ListItemModel>> listLiveData = viewModel.getAllLists();
         listLiveData.observe(this, new Observer<List<ListItemModel>>() {
             @Override
@@ -75,6 +73,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 listAdapter.setTaskItemModels(taskItemModels);
             }
         });
+        downloadData();
     }
 
     public void onClickAddList(View view) {
@@ -104,22 +103,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(@NonNull Loader<JSONArray> loader, JSONArray data) {
-        ArrayList<ListItemModel> listItemModels = JSONUtils.getLists(data);
+        List<ListItemModel> listItemModels = JSONUtils.getLists(data);
         ArrayList<TaskItemModel> taskItemModels = JSONUtils.getTasks(data);
+        //из-за выполнения в разных потоках возникают баги. переделать для выполнения в 1 потоке
         if (listItemModels != null && !listItemModels.isEmpty()) {
             viewModel.deleteAllLists();
             listAdapter.clear();
             for (ListItemModel listItemModel : listItemModels) {
                 viewModel.insertList(listItemModel);
             }
-            listAdapter.setListItemModels(listItemModels);
         }
         if (taskItemModels != null && !taskItemModels.isEmpty()) {
             viewModel.deleteAllTasks();
             for (TaskItemModel taskItemModel : taskItemModels) {
                 viewModel.insertTask(taskItemModel);
             }
-            listAdapter.setTaskItemModels(taskItemModels);
         }
         isLoading = false;
         loaderManager.destroyLoader(LOADER_ID);

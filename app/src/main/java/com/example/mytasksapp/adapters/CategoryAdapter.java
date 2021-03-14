@@ -1,5 +1,6 @@
 package com.example.mytasksapp.adapters;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,15 +8,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.CategoryItem;
+import com.example.mytasksapp.data.ListItemModel;
+import com.example.mytasksapp.data.MainViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
-    private ArrayList<CategoryItem> categoryItems;
+    private List<CategoryItem> categoryItems = new ArrayList<>();
     private boolean isChecked = false;
 
     class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -24,7 +29,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
         public CategoryViewHolder(@NonNull View itemView) {
             super(itemView);
-            categoryItems = new ArrayList<>();
             textViewCategoryTitle = itemView.findViewById(R.id.textViewCategoryTitle);
             imageViewCategoryRadio = itemView.findViewById(R.id.imageViewCategoryRadio);
         }
@@ -52,5 +56,19 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     @Override
     public int getItemCount() {
         return categoryItems.size();
+    }
+
+    public void convertItems(List<ListItemModel> listItemModels) {
+        for (int i = 0; i < listItemModels.size(); i++) {
+            boolean isChecked = i == 0;
+            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
+            categoryItems.add(categoryItem);
+            Log.i("sdasdsa", categoryItem.getTitle()+ "111");
+        }
+    }
+
+    public void setCategoryItems(List<ListItemModel> listItemModels) {
+        convertItems(listItemModels);
+        notifyDataSetChanged();
     }
 }

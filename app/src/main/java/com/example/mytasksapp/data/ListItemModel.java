@@ -1,9 +1,10 @@
 package com.example.mytasksapp.data;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "list")
+@Entity(tableName = "lists")
 public class ListItemModel {
     @PrimaryKey
     private int id;
