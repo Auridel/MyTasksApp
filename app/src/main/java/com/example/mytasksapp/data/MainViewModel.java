@@ -226,6 +226,17 @@ public class MainViewModel extends AndroidViewModel {
         });
     }
 
+    public static LiveData<List<CategoryItem>> getCheckedCategory(){
+        try {
+            return new GetCheckedCategoryTask().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private static class GetCategories extends AsyncTask<Void, Void,
             LiveData<List<CategoryItem>>> {
         @Override
@@ -233,6 +244,16 @@ public class MainViewModel extends AndroidViewModel {
             LiveData<List<CategoryItem>> categories;
             categories = myTasksDatabase.categoryDao().getAllCategories();
             return categories;
+        }
+    }
+
+    private static class GetCheckedCategoryTask extends AsyncTask<Void, Void,
+            LiveData<List<CategoryItem>>>{
+        @Override
+        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
+            LiveData<List<CategoryItem>> liveData;
+            liveData = myTasksDatabase.categoryDao().getCheckegCategory();
+            return liveData;
         }
     }
 }

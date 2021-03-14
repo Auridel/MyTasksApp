@@ -2,7 +2,9 @@ package com.example.mytasksapp.utils;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,11 +12,16 @@ import androidx.loader.content.AsyncTaskLoader;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -46,6 +53,16 @@ public class NetworkUtils {
 
     public static URL buildURLToTodoById(int listId, int todoId) {
         Uri uri = Uri.parse(BASE_URL + PARAMS_LIST + listId + PARAMS_TODO + todoId);
+        try {
+            return new URL(uri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static URL buildURLToPostTodo(int listId) {
+        Uri uri = Uri.parse(BASE_URL + PARAMS_LIST + listId + PARAMS_TODO);
         try {
             return new URL(uri.toString());
         } catch (MalformedURLException e) {

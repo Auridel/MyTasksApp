@@ -32,4 +32,7 @@ public interface CategoryDao {
 
     @Query("UPDATE category SET checked = 1 WHERE id == :id")
     void checkCategory(int id);
+
+    @Query("SELECT * FROM category WHERE checked == 1")
+    LiveData<List<CategoryItem>> getCheckegCategory();
 }
