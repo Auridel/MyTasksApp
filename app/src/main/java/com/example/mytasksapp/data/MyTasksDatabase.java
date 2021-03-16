@@ -6,7 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {ListItemModel.class, TaskItemModel.class, CategoryItem.class}, version = 4, exportSchema = false)
+import com.example.mytasksapp.pojo.MyList;
+import com.example.mytasksapp.pojo.Todo;
+
+@Database(entities = {MyList.class, Todo.class, CategoryItem.class}, version = 8, exportSchema = false)
 public abstract class MyTasksDatabase extends RoomDatabase {
     private static final String dbName = "mytasks.db";
     private static MyTasksDatabase database;
@@ -25,7 +28,7 @@ public abstract class MyTasksDatabase extends RoomDatabase {
 
     public abstract ListDao listDao();
 
-    public abstract TaskDao taskDao();
+//    public abstract TaskDao taskDao();
 
-    public abstract CategoryDao categoryDao();
+//    public abstract CategoryDao categoryDao();
 }

@@ -52,7 +52,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewModel.checkCategory(categoryItem);
+//                viewModel.checkCategory(categoryItem);
             }
         });
         isChecked = categoryItem.isChecked();

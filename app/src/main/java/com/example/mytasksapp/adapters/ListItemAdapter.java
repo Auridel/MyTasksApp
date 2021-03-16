@@ -18,12 +18,13 @@ import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.ListItemModel;
 import com.example.mytasksapp.data.MainViewModel;
 import com.example.mytasksapp.data.TaskItemModel;
+import com.example.mytasksapp.pojo.MyList;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListViewHolder> {
-    private List<ListItemModel> listItemModels;
+    private List<MyList> listItemModels;
     private List<TaskItemModel> taskItemModels;
     TaskAdapter tasksAdapter;
     TaskAdapter completedTaskAdapter;
@@ -84,7 +85,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
 
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
-        ListItemModel listItemModel = listItemModels.get(position);
+        MyList listItemModel = listItemModels.get(position);
         List<TaskItemModel> tasks = filterTasksByListId(listItemModel.getId());
         List<TaskItemModel> completedTasks = filterCompletedTasksByListId(listItemModel.getId());
         holder.textViewListTitle.setText(listItemModel.getTitle());
@@ -106,7 +107,7 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         return listItemModels.size();
     }
 
-    public void setListItemModels(List<ListItemModel> listItemModels) {
+    public void setListItemModels(List<MyList> listItemModels) {
         this.listItemModels = listItemModels;
         notifyDataSetChanged();
     }

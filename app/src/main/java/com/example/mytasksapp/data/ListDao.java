@@ -8,22 +8,27 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import com.example.mytasksapp.pojo.MyList;
+
 import java.util.List;
 
 @Dao
 public interface ListDao {
-    @Query("SELECT * FROM lists")
-    LiveData<List<ListItemModel>> getLists();
+    @Query("SELECT * FROM mylists")
+    LiveData<List<MyList>> getLists();
 
     @Delete
-    void deleteList(ListItemModel listItemModel);
+    void deleteList(MyList myList);
 
-    @Query("DELETE FROM lists")
+    @Query("DELETE FROM mylists")
     void deleteAllLists();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertList(ListItemModel listItemModel);
+    void insertList(MyList myList);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAllLists(List<MyList> myLists);
 
     @Update
-    void updateList(ListItemModel listItemModel);
+    void updateList(MyList myList);
 }

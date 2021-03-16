@@ -42,7 +42,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 public void onClick(View v) {
                     TaskItemModel updatedTask = new TaskItemModel(taskItemModel.getId(), taskItemModel.getListId(),
                             taskItemModel.getText(), !taskItemModel.isChecked());
-                    viewModel.updateTask(updatedTask);
+//                    viewModel.updateTask(updatedTask);
                 }
             });
         }
