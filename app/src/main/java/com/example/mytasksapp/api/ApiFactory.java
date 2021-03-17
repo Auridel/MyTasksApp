@@ -3,6 +3,8 @@ package com.example.mytasksapp.api;
 import com.google.gson.Gson;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -12,7 +14,13 @@ public class ApiFactory {
     private static final String BASE_URL = "http://mobile-dev.oblakogroup.ru/candidate/asddasd/";
 
     public ApiFactory() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor);
+
         retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create())
+                .client(client.build())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(BASE_URL).build();
     }

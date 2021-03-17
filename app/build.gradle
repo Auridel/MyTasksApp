@@ -73,4 +73,7 @@ dependencies {
 
     // optional - Test helpers
     testImplementation "androidx.room:room-testing:$room_version"
+
+    //query interceptor
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
 }

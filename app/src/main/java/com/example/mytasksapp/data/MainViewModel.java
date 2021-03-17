@@ -19,17 +19,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.Disposables;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainViewModel extends AndroidViewModel {
     private static MyTasksDatabase myTasksDatabase;
     private LiveData<List<MyList>> listLiveData;
     private LiveData<List<Todo>> todoLiveData;
-    private CompositeDisposable compositeDisposable;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -57,10 +62,26 @@ public class MainViewModel extends AndroidViewModel {
         return todoLiveData;
     }
 
+    public void postTodo(int id, TodoPost todoPost) {
+        ApiFactory apiFactory = ApiFactory.getInstance();
+        ApiService apiService = apiFactory.getApiService();
+        Call<Todo> call = apiService.postTodo(id, todoPost);
+        call.enqueue(new Callback<Todo>() {
+                    @Override
+                    public void onResponse(Call<Todo> call, Response<Todo> response) {
+                        Log.i("testrun", response.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<Todo> call, Throwable t) {
+                        Log.i("testrun", t.getMessage());
+                    }
+                });
+    }
+
     public void loadData() {
         ApiFactory apiFactory = ApiFactory.getInstance();
         ApiService apiService = apiFactory.getApiService();
-        compositeDisposable = new CompositeDisposable();
         Disposable disposable = apiService.getLists()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
