@@ -1,31 +1,26 @@
 package com.example.mytasksapp.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mytasksapp.MainActivity;
 import com.example.mytasksapp.R;
-import com.example.mytasksapp.data.ListItemModel;
 import com.example.mytasksapp.data.MainViewModel;
-import com.example.mytasksapp.data.TaskItemModel;
 import com.example.mytasksapp.pojo.MyList;
+import com.example.mytasksapp.pojo.Todo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListViewHolder> {
     private List<MyList> listItemModels;
-    private List<TaskItemModel> taskItemModels;
+    private List<Todo> todos;
     TaskAdapter tasksAdapter;
     TaskAdapter completedTaskAdapter;
     private MainViewModel viewModel;
@@ -86,8 +81,8 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
     @Override
     public void onBindViewHolder(@NonNull ListViewHolder holder, int position) {
         MyList listItemModel = listItemModels.get(position);
-        List<TaskItemModel> tasks = filterTasksByListId(listItemModel.getId());
-        List<TaskItemModel> completedTasks = filterCompletedTasksByListId(listItemModel.getId());
+        List<Todo> tasks = filterTasksByListId(listItemModel.getId());
+        List<Todo> completedTasks = filterCompletedTasksByListId(listItemModel.getId());
         holder.textViewListTitle.setText(listItemModel.getTitle());
         holder.recyclerViewTasks.setLayoutManager(new LinearLayoutManager(holder.recyclerViewTasks.getContext(), LinearLayoutManager.VERTICAL, false));
         holder.recyclerViewCompletedTasks.setLayoutManager(new LinearLayoutManager(holder.recyclerViewTasks.getContext(),
@@ -112,28 +107,28 @@ public class ListItemAdapter extends RecyclerView.Adapter<ListItemAdapter.ListVi
         notifyDataSetChanged();
     }
 
-    public void setTaskItemModels(List<TaskItemModel> taskItemModels) {
+    public void setTodos(List<Todo> todos) {
         if(tasksAdapter != null) tasksAdapter.clear();
-        this.taskItemModels = taskItemModels;
+        this.todos = todos;
         notifyDataSetChanged();
     }
 
-    public List<TaskItemModel> filterTasksByListId(int listId) {
-        List<TaskItemModel> result = new ArrayList<>();
-        if(taskItemModels != null && taskItemModels.size() > 0) {
-            for (TaskItemModel task : taskItemModels) {
-                if (task.getListId() == listId && !task.isChecked()) {
-                    result.add(task);
+    public List<Todo> filterTasksByListId(int listId) {
+        List<Todo> result = new ArrayList<>();
+        if(todos != null && todos.size() > 0) {
+            for (Todo todo : todos) {
+                if (todo.getListId() == listId && !todo.isChecked()) {
+                    result.add(todo);
                 }
             }
         }
         return result;
     }
 
-    public List<TaskItemModel> filterCompletedTasksByListId(int listId) {
-        List<TaskItemModel> result = new ArrayList<>();
-        if(taskItemModels != null && taskItemModels.size() > 0) {
-            for (TaskItemModel task : taskItemModels) {
+    public List<Todo> filterCompletedTasksByListId(int listId) {
+        List<Todo> result = new ArrayList<>();
+        if(todos != null && todos.size() > 0) {
+            for (Todo task : todos) {
                 if (task.getListId() == listId && task.isChecked()) {
                     result.add(task);
                 }

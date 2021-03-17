@@ -1,6 +1,5 @@
 package com.example.mytasksapp.adapters;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +8,10 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.CategoryItem;
-import com.example.mytasksapp.data.ListItemModel;
 import com.example.mytasksapp.data.MainViewModel;
 
 import java.util.ArrayList;
@@ -52,7 +49,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.constraintLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                viewModel.checkCategory(categoryItem);
+                viewModel.checkCategory(categoryItem);
             }
         });
         isChecked = categoryItem.isChecked();

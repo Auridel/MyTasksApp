@@ -1,6 +1,7 @@
 package com.example.mytasksapp.pojo;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.Expose;
@@ -28,6 +29,15 @@ public class Todo {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
+
+    public Todo(int id, String text, int listId, boolean checked, String createdAt, String updatedAt) {
+        this.id = id;
+        this.text = text;
+        this.listId = listId;
+        this.checked = checked;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     public int getId() {
         return id;

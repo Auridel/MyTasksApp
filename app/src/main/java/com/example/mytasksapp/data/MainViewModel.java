@@ -12,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import com.example.mytasksapp.api.ApiFactory;
 import com.example.mytasksapp.api.ApiService;
 import com.example.mytasksapp.pojo.MyList;
+import com.example.mytasksapp.pojo.Todo;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -27,11 +28,14 @@ import io.reactivex.schedulers.Schedulers;
 public class MainViewModel extends AndroidViewModel {
     private static MyTasksDatabase myTasksDatabase;
     private LiveData<List<MyList>> listLiveData;
+    private LiveData<List<Todo>> todoLiveData;
     private CompositeDisposable compositeDisposable;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
         myTasksDatabase = MyTasksDatabase.getInstance(getApplication());
+        listLiveData = myTasksDatabase.listDao().getLists();
+        todoLiveData = myTasksDatabase.todoDao().getAllTodos();
     }
 
     public LiveData<List<MyList>> getAllLists() {
@@ -49,8 +53,8 @@ public class MainViewModel extends AndroidViewModel {
         return listLiveData;
     }
 
-    public void setListLiveData(LiveData<List<MyList>> listLiveData) {
-        this.listLiveData = listLiveData;
+    public LiveData<List<Todo>> getTodoLiveData() {
+        return todoLiveData;
     }
 
     public void loadData() {
@@ -63,8 +67,19 @@ public class MainViewModel extends AndroidViewModel {
                 .subscribe(new Consumer<List<MyList>>() {
                     @Override
                     public void accept(List<MyList> myLists) throws Exception {
-                        Log.i("testrun", myLists.get(0).getTitle());
-                        insertAllLists(myLists);
+                        for(int i = 0; i< myLists.size(); i++) {
+                            insertList(myLists.get(i));
+                            boolean isChecked = (i == 0);
+                            CategoryItem categoryItem = new CategoryItem(myLists.get(i).getId(), myLists.get(i).getTitle(),
+                                    isChecked);
+                            insertCategory(categoryItem);
+                            List<Todo> todos = myLists.get(i).getTodos();
+                            if(todos != null && todos.size() > 0) {
+                                for (Todo todo : todos) {
+                                    insertTodo(todo);
+                                }
+                            }
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -139,181 +154,181 @@ public class MainViewModel extends AndroidViewModel {
         }
     }
 
-//    public LiveData<List<TaskItemModel>> getTasksByListId(int listId) {
-//        try {
-//            return new GetTasksByListIdTask().execute(listId).get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    public LiveData<List<Todo>> getTodoByListId(int listId) {
+        try {
+            return new GetTodosByListIdTask().execute(listId).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 //
-//    public void deleteAllTasks() {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.taskDao().deleteAllTasks();
-//            }
-//        });
-//    }
+    public void deleteAllTodos() {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.todoDao().deleteAllTodos();
+            }
+        });
+    }
 //
-//    public void deleteTask(TaskItemModel taskItemModel) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.taskDao().deleteTask(taskItemModel);
-//            }
-//        });
-//    }
+    public void deleteTodo(Todo todo) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.todoDao().deleteTodo(todo);
+            }
+        });
+    }
 //
-//    public void updateTask(TaskItemModel taskItemModel) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.taskDao().updateTask(taskItemModel);
-//            }
-//        });
-//    }
+    public void updateTodo(Todo todo) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.todoDao().updateTodo(todo);
+            }
+        });
+    }
 //
-//    public void insertTask(TaskItemModel taskItemModel) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.taskDao().insertTask(taskItemModel);
-//            }
-//        });
-//    }
+    public void insertTodo(Todo todo) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.todoDao().insertTodo(todo);
+            }
+        });
+    }
 //
-//    public LiveData<List<TaskItemModel>> getAllTasks() {
-//        try {
-//            return new GetAllTasks().execute().get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    public LiveData<List<Todo>> getAllTodos() {
+        try {
+            return new GetAllTodos().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 //
-//    private static class GetTasksByListIdTask extends AsyncTask<Integer, Void,
-//            LiveData<List<TaskItemModel>>> {
-//        @Override
-//        protected LiveData<List<TaskItemModel>> doInBackground(Integer... integers) {
-//            if (integers != null && integers.length > 0) {
-//                return myTasksDatabase.taskDao().getTasksByListId(integers[0]);
-//            }
-//            return null;
-//        }
-//    }
+    private static class GetTodosByListIdTask extends AsyncTask<Integer, Void,
+            LiveData<List<Todo>>> {
+        @Override
+        protected LiveData<List<Todo>> doInBackground(Integer... integers) {
+            if (integers != null && integers.length > 0) {
+                return myTasksDatabase.todoDao().getTasksByListId(integers[0]);
+            }
+            return null;
+        }
+    }
 //
-//    private static class GetAllTasks extends AsyncTask<Void, Void,
-//            LiveData<List<TaskItemModel>>> {
-//        @Override
-//        protected LiveData<List<TaskItemModel>> doInBackground(Void... voids) {
-//            LiveData<List<TaskItemModel>> tasks;
-//            tasks = myTasksDatabase.taskDao().getAllTasks();
-//            return tasks;
-//        }
-//    }
+    private static class GetAllTodos extends AsyncTask<Void, Void,
+            LiveData<List<Todo>>> {
+        @Override
+        protected LiveData<List<Todo>> doInBackground(Void... voids) {
+            LiveData<List<Todo>> tasks;
+            tasks = myTasksDatabase.todoDao().getAllTodos();
+            return tasks;
+        }
+    }
 //
-//    public static LiveData<List<CategoryItem>> getCategories() {
-//        try {
-//            return new GetCategories().execute().get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-//
-//    public static void deleteAllCategories() {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.categoryDao().deleteAllCategories();
-//            }
-//        });
-//    }
-//
-//    public static void insertCategory(CategoryItem categoryItem) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.categoryDao().insertCategory(categoryItem);
-//            }
-//        });
-//    }
-//
-//    public static void deleteCategory(CategoryItem categoryItem) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.categoryDao().deleteCategory(categoryItem);
-//            }
-//        });
-//    }
-//
-//    public static void updateCategory(CategoryItem categoryItem) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.categoryDao().updateCategory(categoryItem);
-//            }
-//        });
-//    }
-//
-//    public static void checkCategory(CategoryItem categoryItem) {
-//        Executor executor = Executors.newSingleThreadExecutor();
-//        executor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                myTasksDatabase.categoryDao().uncheckCategories();
-//                myTasksDatabase.categoryDao().checkCategory(categoryItem.getId());
-//            }
-//        });
-//    }
-//
-//    public static LiveData<List<CategoryItem>> getCheckedCategory(){
-//        try {
-//            return new GetCheckedCategoryTask().execute().get();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-//
-//    private static class GetCategories extends AsyncTask<Void, Void,
-//            LiveData<List<CategoryItem>>> {
-//        @Override
-//        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
-//            LiveData<List<CategoryItem>> categories;
-//            categories = myTasksDatabase.categoryDao().getAllCategories();
-//            return categories;
-//        }
-//    }
-//
-//    private static class GetCheckedCategoryTask extends AsyncTask<Void, Void,
-//            LiveData<List<CategoryItem>>>{
-//        @Override
-//        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
-//            LiveData<List<CategoryItem>> liveData;
-//            liveData = myTasksDatabase.categoryDao().getCheckegCategory();
-//            return liveData;
-//        }
-//    }
+    public static LiveData<List<CategoryItem>> getCategories() {
+        try {
+            return new GetCategories().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void deleteAllCategories() {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.categoryDao().deleteAllCategories();
+            }
+        });
+    }
+
+    public static void insertCategory(CategoryItem categoryItem) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.categoryDao().insertCategory(categoryItem);
+            }
+        });
+    }
+
+    public static void deleteCategory(CategoryItem categoryItem) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.categoryDao().deleteCategory(categoryItem);
+            }
+        });
+    }
+
+    public static void updateCategory(CategoryItem categoryItem) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.categoryDao().updateCategory(categoryItem);
+            }
+        });
+    }
+
+    public static void checkCategory(CategoryItem categoryItem) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                myTasksDatabase.categoryDao().uncheckCategories();
+                myTasksDatabase.categoryDao().checkCategory(categoryItem.getId());
+            }
+        });
+    }
+
+    public static LiveData<List<CategoryItem>> getCheckedCategory(){
+        try {
+            return new GetCheckedCategoryTask().execute().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static class GetCategories extends AsyncTask<Void, Void,
+            LiveData<List<CategoryItem>>> {
+        @Override
+        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
+            LiveData<List<CategoryItem>> categories;
+            categories = myTasksDatabase.categoryDao().getAllCategories();
+            return categories;
+        }
+    }
+
+    private static class GetCheckedCategoryTask extends AsyncTask<Void, Void,
+            LiveData<List<CategoryItem>>>{
+        @Override
+        protected LiveData<List<CategoryItem>> doInBackground(Void... voids) {
+            LiveData<List<CategoryItem>> liveData;
+            liveData = myTasksDatabase.categoryDao().getCheckegCategory();
+            return liveData;
+        }
+    }
 
     @Override
     protected void onCleared() {

@@ -12,10 +12,10 @@ import java.util.List;
 
 @Dao
 public interface CategoryDao {
-    @Query("SELECT * FROM category")
+    @Query("SELECT * FROM mycategory")
     LiveData<List<CategoryItem>> getAllCategories();
 
-    @Query("DELETE FROM category")
+    @Query("DELETE FROM mycategory")
     void deleteAllCategories();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -27,12 +27,12 @@ public interface CategoryDao {
     @Update
     void updateCategory(CategoryItem categoryItem);
 
-    @Query("UPDATE category SET checked = 0 WHERE checked == 1")
+    @Query("UPDATE mycategory SET checked = 0 WHERE checked == 1")
     void uncheckCategories();
 
-    @Query("UPDATE category SET checked = 1 WHERE id == :id")
+    @Query("UPDATE mycategory SET checked = 1 WHERE id == :id")
     void checkCategory(int id);
 
-    @Query("SELECT * FROM category WHERE checked == 1")
+    @Query("SELECT * FROM mycategory WHERE checked == 1")
     LiveData<List<CategoryItem>> getCheckegCategory();
 }

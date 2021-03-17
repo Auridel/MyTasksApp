@@ -1,40 +1,23 @@
 package com.example.mytasksapp;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Application;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 
 import com.example.mytasksapp.adapters.ListItemAdapter;
 import com.example.mytasksapp.data.CategoryItem;
-import com.example.mytasksapp.data.ListItemModel;
 import com.example.mytasksapp.data.MainViewModel;
-import com.example.mytasksapp.data.TaskItemModel;
 import com.example.mytasksapp.pojo.MyList;
 import com.example.mytasksapp.pojo.Todo;
-import com.example.mytasksapp.utils.JSONUtils;
-import com.example.mytasksapp.utils.NetworkUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONArray;
-
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -61,12 +44,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onChanged(List<MyList> myLists) {
                 listAdapter.setListItemModels(myLists);
-                for (MyList myList : myLists) {
-                    List<Todo> todos = myList.getTodos();
-                    for (Todo todo: todos) {
-                        Log.i("testrun", todo.getText());
-                    }
-                }
+            }
+        });
+        viewModel.getAllTodos().observe(this, new Observer<List<Todo>>() {
+            @Override
+            public void onChanged(List<Todo> todos) {
+                listAdapter.setTodos(todos);
             }
         });
         viewModel.loadData();
@@ -78,13 +61,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void convertItems(List<ListItemModel> listItemModels) {
-        for (int i = 0; i < listItemModels.size(); i++) {
-            boolean isChecked = i == 0;
-            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
-//            viewModel.insertCategory(categoryItem);
-        }
-    }
+//    private void convertItems(List<ListItemModel> listItemModels) {
+//        for (int i = 0; i < listItemModels.size(); i++) {
+//            boolean isChecked = i == 0;
+//            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
+////            viewModel.insertCategory(categoryItem);
+//        }
+//    }
 
     public void onClickEditLists(View view) {
     }

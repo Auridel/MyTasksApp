@@ -1,6 +1,7 @@
 package com.example.mytasksapp.pojo;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -11,7 +12,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "mylists")
-@TypeConverters(value = Converter.class)
 public class MyList {
 
     @SerializedName("id")
@@ -30,8 +30,8 @@ public class MyList {
     @SerializedName("updated_at")
     @Expose
     private String updatedAt;
-    @SerializedName("todos")
-    @Expose
+
+    @Ignore
     private List<Todo> todos = null;
 
     public int getId() {
@@ -74,10 +74,12 @@ public class MyList {
         this.updatedAt = updatedAt;
     }
 
+    @Ignore
     public List<Todo> getTodos() {
         return todos;
     }
 
+    @Ignore
     public void setTodos(List<Todo> todos) {
         this.todos = todos;
     }

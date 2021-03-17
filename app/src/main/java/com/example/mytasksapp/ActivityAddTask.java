@@ -45,14 +45,14 @@ public class ActivityAddTask extends AppCompatActivity {
         categoryAdapter.setViewModel(viewModel);
         recyclerViewAddCategories.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerViewAddCategories.setAdapter(categoryAdapter);
-//        LiveData<List<CategoryItem>> liveData = viewModel.getCategories();
-//        liveData.observe(this, new Observer<List<CategoryItem>>() {
-//            @Override
-//            public void onChanged(List<CategoryItem> categoryItems) {
-//                    categoryAdapter.setCategoryItems(categoryItems);
-//                    categoryItemList = categoryItems;
-//            }
-//        });
+        LiveData<List<CategoryItem>> liveData = viewModel.getCategories();
+        liveData.observe(this, new Observer<List<CategoryItem>>() {
+            @Override
+            public void onChanged(List<CategoryItem> categoryItems) {
+                    categoryAdapter.setCategoryItems(categoryItems);
+                    categoryItemList = categoryItems;
+            }
+        });
     }
 
     public void onClickGoToMain(View view) {

@@ -8,21 +8,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.mytasksapp.MainActivity;
 import com.example.mytasksapp.R;
 import com.example.mytasksapp.data.MainViewModel;
-import com.example.mytasksapp.data.TaskItemModel;
+import com.example.mytasksapp.pojo.Todo;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder> {
-    private List<TaskItemModel> taskItemModels;
+    private List<Todo> taskItemModels;
     private boolean isChecked = false;
-    private TaskItemModel taskItemModel;
+    private Todo taskItemModel;
     private MainViewModel viewModel;
 
     public TaskAdapter() {
@@ -40,9 +38,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    TaskItemModel updatedTask = new TaskItemModel(taskItemModel.getId(), taskItemModel.getListId(),
-                            taskItemModel.getText(), !taskItemModel.isChecked());
-//                    viewModel.updateTask(updatedTask);
+                    Todo updatedTodo = new Todo(taskItemModel.getId(), taskItemModel.getText(),
+                            taskItemModel.getListId(), !taskItemModel.isChecked(), taskItemModel.getCreatedAt(),
+                            taskItemModel.getUpdatedAt());
+                    viewModel.updateTodo(updatedTodo);
                 }
             });
         }
@@ -71,7 +70,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
         return taskItemModels.size();
     }
 
-    public void setTaskItemModels(List<TaskItemModel> taskItemModels) {
+    public void setTaskItemModels(List<Todo> taskItemModels) {
         this.taskItemModels = taskItemModels;
         notifyDataSetChanged();
     }
