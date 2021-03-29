@@ -70,6 +70,7 @@ public class MainViewModel extends AndroidViewModel {
                     @Override
                     public void onResponse(Call<Todo> call, Response<Todo> response) {
                         Log.i("testrun", response.toString());
+                        insertTodo(response.body());
                     }
 
                     @Override

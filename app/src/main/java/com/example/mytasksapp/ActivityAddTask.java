@@ -66,6 +66,7 @@ public class ActivityAddTask extends AppCompatActivity {
 
     public void onClickGoToMain(View view) {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("isLoaded", true);
         startActivity(intent);
     }
 
@@ -76,6 +77,9 @@ public class ActivityAddTask extends AppCompatActivity {
         if (checkedId != 0) {
             TodoPost todoPost = new TodoPost(checkedId, text);
             viewModel.postTodo(checkedId, todoPost);
+            Intent intent = new Intent();
+            intent.putExtra("isLoaded", true);
+            startActivity(intent);
         }
     }
 }

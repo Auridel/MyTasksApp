@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.example.mytasksapp.adapters.ListItemAdapter;
@@ -23,6 +24,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewMainScreen;
     private FloatingActionButton floatingActionButtonAddList;
+    private boolean isLoaded = false;
 
     private MainViewModel viewModel;
     private ListItemAdapter listAdapter;
@@ -31,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = getIntent();
+        if(intent.hasExtra("isLoaded")) {
+            boolean fromIntent = intent.getBooleanExtra("isLoaded", false);
+            isLoaded = fromIntent;
+        }
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory
                 .getInstance(getApplication())).get(MainViewModel.class);
         recyclerViewMainScreen = findViewById(R.id.recyclerViewMainScreen);
@@ -52,7 +59,10 @@ public class MainActivity extends AppCompatActivity {
                 listAdapter.setTodos(todos);
             }
         });
-        viewModel.loadData();
+        if(!isLoaded) {
+            Log.i("testrun", "load");
+            viewModel.loadData();
+        }
     }
 
     public void onClickAddList(View view) {
@@ -60,15 +70,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
-//    private void convertItems(List<ListItemModel> listItemModels) {
-//        for (int i = 0; i < listItemModels.size(); i++) {
-//            boolean isChecked = i == 0;
-//            CategoryItem categoryItem = new CategoryItem(listItemModels.get(i).getId(), listItemModels.get(i).getTitle(), isChecked);
-////            viewModel.insertCategory(categoryItem);
-//        }
-//    }
-
     public void onClickEditLists(View view) {
+        Bundle bundle = new Bundle();
+        bundle.putString("hello", "world");
+        BottomSheetModal bottomSheetModal = new BottomSheetModal(bundle, viewModel, this);
+        bottomSheetModal.show(getSupportFragmentManager(), "BottomSheetModal");
     }
 }
